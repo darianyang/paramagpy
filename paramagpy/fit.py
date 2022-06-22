@@ -356,7 +356,7 @@ def svd_gridsearch_fit_metal_from_pcs(initMetals, dataArrays, ensembleAverage=Fa
 	prog = 0.0
 	if tot<1:
 		raise ValueError("Zero grid points selected for SVD search")
-	print("SVD gridsearch started in {} points".format(len(sphere)))
+	#print("SVD gridsearch started in {} points".format(len(sphere)))
 
 	for mdl in datas:
 		minscore = 1E308
