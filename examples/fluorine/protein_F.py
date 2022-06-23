@@ -131,21 +131,14 @@ class CustomAtom(Atom):
 		'H': 2*np.pi*42.576E6,
 		'N': 2*np.pi*-4.316E6,
 		'C': 2*np.pi*10.705E6,
-		'F': 2*np.pi*40.053E6} # rad/s/T
+        'F': 2*np.pi*40.053E6} # rad/s/T
 
 	csa_lib = {
-		#'H': (np.array([-5.8 , 0.0  ,5.8 ])*1E-6, 8. *(np.pi/180.)),
 		'H': (np.array([-5.8 , 0.0  ,5.8 ])*1E-6, 8. *(np.pi/180.)),
 		'N': (np.array([-62.8,-45.7 ,108.5])*1E-6, 19.*(np.pi/180.)),
-		'C': (np.array([-86.5 ,11.8, 74.7])*1E-6, 38.*(np.pi/180.)),
-		'FZ3': (np.array([-82.7, -140.2, -151.8])*1E-6, 1.36718),
-		'F03': (np.array([-66.6, -126.1 , -190.6])*1E-6, 1.36718),
-		'FZ5': (np.array([-73, -138.3, -163.9]), 1.36718),
-		'F02': (np.array([-64.9, -129, -169.4]), 1.36718),
-		'F01': (np.array([-73.2, -126.1, -201.1]), 1.36718)}
-		#1.36718
-		#'FZ3': (np.array([-82.7 ,-140.2 ,-151.8])*1E-6, 1.36718)}
-		#-82.7 ,-140.2 ,-151.8
+		'C': (np.array([-86.5 ,11.8 ,74.7])*1E-6, 38.*(np.pi/180.)),
+        'F': (np.array([-82.7 ,-140.2 ,-151.8])*1E-6, 1.36718)}
+
 	"""docstring for CustomAtom"""
 	def __init__(self, *arg, **kwargs):
 		super().__init__(*arg, **kwargs)
@@ -199,11 +192,7 @@ class CustomAtom(Atom):
 		resp = res.parent.child_dict.get(respid)
 		resn = res.parent.child_dict.get(resnid)
 
-		#print(self.name)
 		pas, beta = self.csa_lib.get(self.name, (None,None))
-		#print("BETA: ", beta)
-		#print("pas", pas)
-		#print("Element",self.element)
 		if resp:
 			Hcond = self.element=='H', 'N' in res ,'C' in resp, beta
 			Ncond = self.element=='N', 'H' in res ,'C' in resp, beta
@@ -214,35 +203,15 @@ class CustomAtom(Atom):
 			Ccond = self.element=='C', 'H' in resn,'N' in resn, beta
 		else:
 			Ccond = (None,)
-		if self.element == 'F':
-			Fcond = self.element == 'F', beta
-			"""
-			if self.name == 'F01':
-				Fcond = self.element == 'F', beta
-			elif self.name == 'F02':
-				Fcond = self.element == 'F', beta
-			elif self.name == 'F03':
-				Fcond = self.element == 'F', beta
-			else:
-				Fcond = (None,)
-			"""
-			
-		else:
-			Fcond = (None,)
-			
-
 
 		if all(Hcond):
 			NC_vec = resp['C'].coord - res['N'].coord
 			NH_vec =  res['H'].coord - res['N'].coord
 			z = norm(np.cross(NC_vec, NH_vec))
-			print("z",z)
 			R = rotation_matrix(-z,beta)
 			x = norm(R.dot(NH_vec))
-			print("x",x)
 			y = norm(np.cross(z, x))
-			print("y",y)
-			print("Hrotation matrix: ", R)
+			print("rotation matrix: ", R)
 			print("NC vector: ", NC_vec)
 			print("NH vector: ", NH_vec)
 
@@ -253,7 +222,7 @@ class CustomAtom(Atom):
 			R = rotation_matrix(-y,beta)
 			z = norm(R.dot(NH_vec))
 			x = norm(np.cross(y, z))
-			print("Nrotation matrix: ", R)
+			print("rotation matrix: ", R)
 			print("NC vector: ", NC_vec)
 			print("NH vector: ", NH_vec)
 
@@ -264,59 +233,15 @@ class CustomAtom(Atom):
 			R = rotation_matrix(x,beta)
 			z = norm(R.dot(CN_vec))
 			y = norm(np.cross(z, x))
-			print("Crotation matrix: ", R)
-			print("CN vector: ", CN_vec)
+			print("rotation matrix: ", R)
+			print("NC vector: ", NC_vec)
 			print("NH vector: ", NH_vec)
 
-		elif all(Fcond):
-			#needs to return x y z
-			if self.name == 'FZ3':
-				FC_vec = res['CZ3'].coord - res['FZ3'].coord
-				CC_vec = res['CZ3'].coord - res['CH2'].coord
-				x = norm(np.cross(FC_vec, CC_vec))
-				R = rotation_matrix(x, beta)
-				z = norm(R.dot(FC_vec))
-				y = norm(np.cross(z, x))
-			elif self.name =='F01':
-				FC_vec = res['CZ2'].coord - res['F01'].coord
-				CC_vec = res['CZ2'].coord - res['CE2'].coord
-				x = norm(np.cross(FC_vec, CC_vec))
-				R = rotation_matrix(x, beta)
-				z = norm(R.dot(FC_vec))
-				y = norm(np.cross(z, x))
-			elif self.name =='F02':
-				FC_vec = res['CH2'].coord - res['F02'].coord
-				CC_vec = res['CH2'].coord - res['CZ2'].coord
-				x = norm(np.cross(FC_vec, CC_vec))
-				R = rotation_matrix(x, beta)
-				z = norm(R.dot(FC_vec))
-				y = norm(np.cross(z, x))
-			elif self.name =='F03':
-				FC_vec = res['CE3'].coord - res['F03'].coord
-				CC_vec = res['CE3'].coord - res['CD2'].coord
-				x = norm(np.cross(FC_vec, CC_vec))
-				R = rotation_matrix(x, beta)
-				z = norm(R.dot(FC_vec))
-				y = norm(np.cross(z, x))
-			else:
-				print("Invalid F")
-			#print("Frotation matrix: ", R)
-			#print("FC vector: ", FC_vec)
-			#print("CC vector: ", CC_vec)
-
-			#print("You did it")
-			#return np.zeros(9).reshape(3,3)
-			
 		else:
-			print("No element selected")
 			return np.zeros(9).reshape(3,3)
 		transform = np.vstack([x, y, z]).T
-		#print("Transform", transform)
-		diagpas = np.diag(pas)
-		tensor = transform.dot(diagpas)
-		tensor = tensor.dot(transform.T)
-		#print()
-		#print("tensor", tensor)
+		tensor = transform.dot(np.diag(pas)).dot(transform.T)
+		print(tensor)
 		return tensor
 
 	@csa.setter
@@ -604,6 +529,3 @@ class PyMolScript(object):
 		with open(fileName, 'w') as f:
 			f.write(self.preamble)
 			f.write('\n'.join(self.lines))
-
-
-

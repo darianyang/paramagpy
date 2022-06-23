@@ -884,7 +884,7 @@ class Metal(object):
 		"""
 		A vectorised version of 
 		:meth:`paramagpy.metal.Metal.dipole_shift_tensor`
-
+tensor
 		This is generally used for fast calculations.
 
 		Parameters
@@ -1043,6 +1043,7 @@ class Metal(object):
 			the residual anisotropic chemical shift in parts-per-million (ppm)
 		"""
 		racs = self.tensor_alignment.dot(csa).trace()
+		#print("HERE RACS: ", 1E6*racs)
 		return 1E6*racs
 
 	def fast_racs(self, csaarray):
@@ -1062,7 +1063,9 @@ class Metal(object):
 			the residual anisotropic chemical shift in parts-per-million (ppm)
 		"""
 		racs = 2*np.einsum('jk,ikl->ijl',self.tensor_alignment,csaarray)
-		return 1E6*racs.trace(axis1=1,axis2=2)/3.
+		racs = 1E6*racs.trace(axis1=1,axis2=2)/3.
+		print("HERE RACS: ", racs)
+		return racs
 
 	def pcs_gradient(self, position):
 		"""
