@@ -1,5 +1,7 @@
 ## Calibrating Fluorine PCS Data
 
+Many of these files are examples, practice, or pdbs used for calculation
+
 #### pcs_fit_test_dchi.py
 * This script allows the user to manually input the delta chi tensor
 * Calculates the racs values for varying ax, rh, beta, and degree(tag rotation) values
