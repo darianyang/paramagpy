@@ -24,7 +24,7 @@ def calc_racs(pdb, ax=-6.342E-32, rh=-1.412E-32, beta = 1.36718):
 	flib = f.csa_lib
 	#print(flib['FZ3'])
 
-	flib['FZ3'] = ([-15.809, -7.062, -23.910]), beta
+	flib['FZ3'] = ([-82.7*1E-6, -140.2*1E-6, -151.8*1E-6]), beta
 	#print(f.csa_lib)
 	# change beta of csa lib
 	fcsa = f.csa
@@ -120,6 +120,7 @@ racsBeta = []
 for i in np.linspace(0.1,np.pi*2,25):
 		x = [calc_racs('0_deg_rot_gb1-ntaco-leap_adj.pdb', beta = i)]
 		racsBeta.append(x)
+print(racsBeta)
 """
 plt.plot(bet, racsBeta)
 plt.xlabel('beta values')
